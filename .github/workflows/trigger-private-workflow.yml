@@ -29,6 +29,6 @@ jobs:
             owner: 'cris-oddball',
             repo: 'hello-world',
             event_type: 'run_regression',
-            client_payload: {"environment": ${{ inputs.environment }}}
+            client_payload: {"environment": "${{ inputs.environment }}"}
           })
           console.log(result);
