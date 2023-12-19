@@ -10,7 +10,7 @@ REF="${5}"
 CLIENT_PAYLOAD="${6}"
 WAIT_INTERVAL=${7:-10} # Default wait interval is 10 seconds
 
-# GitHub API URLs
+# GitHub API URL
 GITHUB_API_URL="https://api.github.com"
 GITHUB_SERVER_URL="https://github.com"
 
@@ -20,10 +20,10 @@ api_call() {
   method=$2
   data=$3
 
-  response=$(curl -sSL -w "%{http_code}" -X "$method" \
+  response=$(curl -L -sSL -w "%{http_code}" -X "$method" \
+    -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    -H 'Accept: application/vnd.github.v3+json' \
-    -H 'Content-Type: application/json' \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
     "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
     -d "$data")
 
