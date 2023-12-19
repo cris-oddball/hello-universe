@@ -8,22 +8,20 @@ GITHUB_TOKEN="${3}"
 WORKFLOW_FILE_NAME="${4}"  # This should be the workflow file name or ID
 REF="${5}"
 CLIENT_PAYLOAD="${6}"  # JSON payload for inputs
-WAIT_INTERVAL=${7:-10} # Default wait interval is 10 seconds
 
 # GitHub API URL
 GITHUB_API_URL="https://api.github.com"
 
-# Function to make API calls
+# Function to make API calls with improved error handling
 api_call() {
   path=$1
   method=$2
   data=$3
 
-  response=$(curl -L -sSL -w "%{http_code}" -X "$method" \
-    -H "Accept: application/vnd.github+json" \
+  response=$(curl --fail-with-body -L -sSL -w "%{http_code}" -X "$method" \
+    -H "Accept: application/vnd.github.v3+json" \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/workflows/$path/dispatches" \
+    "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
     -d "$data")
 
   http_code=$(tail -n1 <<<"$response")  # Extract HTTP status code
@@ -31,10 +29,6 @@ api_call() {
 
   echo "HTTP Response Code: $http_code"
   echo "API Response: $response_body"
-
-# Log the full API call for debugging
-  echo "Making API call to: ${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/workflows/$path/dispatches"
-	echo "With data: $data"
 
   if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 201 ]; then
     echo >&2 "API call failed with status $http_code: $path"
@@ -45,7 +39,7 @@ api_call() {
 
 # Trigger the workflow
 echo "Attempting to trigger workflow: ${WORKFLOW_FILE_NAME}"
-trigger_response=$(api_call "$WORKFLOW_FILE_NAME" "POST" "{\"ref\":\"${REF}\",\"inputs\":${CLIENT_PAYLOAD}}")
+trigger_response=$(api_call "workflows/${WORKFLOW_FILE_NAME}/dispatches" "POST" "{\"ref\":\"${REF}\",\"inputs\":${CLIENT_PAYLOAD}}")
 
 if [ "$(jq -r '.message' <<<"$trigger_response")" != "null" ]; then
   echo >&2 "Failed to trigger the workflow. Response message: $(jq -r '.message' <<<"$trigger_response")"
