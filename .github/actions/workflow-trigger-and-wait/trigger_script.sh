@@ -20,27 +20,36 @@ api_call() {
   method=$2
   data=$3
 
-  response=$(curl -sSL -X "$method" \
+  response=$(curl -sSL -w "%{http_code}" -X "$method" \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -H 'Accept: application/vnd.github.v3+json' \
     -H 'Content-Type: application/json' \
     "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
     -d "$data")
 
-  # Delete this line once this script has been tested
-  echo "API Response: $response"  # Echo the full JSON response
+  http_code=$(tail -n1 <<<"$response")  # Extract HTTP status code
+  response_body=$(sed '$ d' <<<"$response")  # Extract response body
 
-  if [ $? -ne 0 ]; then
-    echo >&2 "API call failed: $path"
+  echo "HTTP Response Code: $http_code"
+  echo "API Response: $response_body"
+
+  if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 201 ]; then
+    echo >&2 "API call failed with status $http_code: $path"
     exit 1
   fi
-  echo "$response"
+  echo "$response_body"
 }
 
 # Trigger the workflow
-echo "Triggering workflow: ${WORKFLOW_FILE_NAME}"
+echo "Attempting to trigger workflow: ${WORKFLOW_FILE_NAME}"
 trigger_response=$(api_call "workflows/${WORKFLOW_FILE_NAME}/dispatches" "POST" "{\"ref\":\"${REF}\",\"inputs\":${CLIENT_PAYLOAD}}")
-echo "Workflow triggered successfully."
+
+if [ "$(jq -r '.message' <<<"$trigger_response")" != "null" ]; then
+  echo >&2 "Failed to trigger the workflow. Response message: $(jq -r '.message' <<<"$trigger_response")"
+  exit 1
+else
+  echo "Workflow trigger appears successful."
+fi
 
 # Function to wait and check the workflow status
 wait_and_check_status() {
