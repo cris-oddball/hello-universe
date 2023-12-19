@@ -1,13 +1,6 @@
 name: Trigger Regression
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        description: "Deployment environment to test (dev|perf|staging)"
-        default: "perf"
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       environment:
@@ -15,20 +8,30 @@ on:
         default: "perf"
         required: true
         type: string
+      branch:
+        description: "Git branch to use in the private repo"
+        required: true
+        type: string
 
 jobs:
   run-regression:
-    name: "set up regression for ${{ inputs.environment }}"
+    name: "Set up regression for ${{ inputs.environment }}"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.DISPATCH_PAT }}
-        script: |
-          const result = await github.rest.repos.createDispatchEvent({
-            owner: 'cris-oddball',
-            repo: 'hello-world',
-            event_type: 'run_regression',
-            client_payload: {"environment": "${{ inputs.environment }}"}
-          })
-          console.log(result);
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Trigger Regression Workflow
+        uses: ./.github/actions/workflow-trigger-and-wait
+        with:
+          owner: cris-oddball
+          repo: hello-world
+          github_token: ${{ secrets.DISPATCH_PAT }}
+          workflow_file_name: regression.yml
+          ref: ${{ inputs.branch }}
+          client_payload: '{"environment": "${{ inputs.environment }}", "branch": "${{ github.ref }}" }'
+          wait_interval: 10
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
