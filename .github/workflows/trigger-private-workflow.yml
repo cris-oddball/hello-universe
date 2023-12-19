@@ -31,7 +31,8 @@ jobs:
           ref: ${{ inputs.branch }}
           client_payload: '{"environment": "${{ inputs.environment }}", "branch": "${{ github.ref }}" }'
           wait_interval: 10
-          propagate_failure: true
-          trigger_workflow: true
-          wait_workflow: true
+          # may not include these
+          #propagate_failure: true
+          #trigger_workflow: true
+          #wait_workflow: true
 

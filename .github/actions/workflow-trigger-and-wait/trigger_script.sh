@@ -1,6 +1,3 @@
-# Re-creating the enhanced trigger_script.sh after code execution state reset
-
-enhanced_script = """
 #!/usr/bin/env bash
 set -e
 
@@ -30,6 +27,7 @@ api_call() {
     "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
     -d "$data")
 
+  # Delete this line once this script has been tested
   echo "API Response: $response"  # Echo the full JSON response
 
   if [ $? -ne 0 ]; then
@@ -70,7 +68,3 @@ echo "Workflow run URL: $run_url"
 
 # Wait for workflow to complete and check its status
 wait_and_check_status "$run_id"
-"""
-
-enhanced_script
-
