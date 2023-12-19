@@ -27,7 +27,7 @@ jobs:
           owner: cris-oddball
           repo: hello-world
           github_token: ${{ secrets.DISPATCH_PAT }}
-          workflow_file_name: regression.yml
+          workflow_file_name: run-tests.yml
           ref: ${{ inputs.branch }}
           client_payload: '{"environment": "${{ inputs.environment }}", "branch": "${{ github.ref }}" }'
           wait_interval: 10
