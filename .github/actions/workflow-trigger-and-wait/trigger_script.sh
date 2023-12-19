@@ -2,9 +2,9 @@
 set -e
 
 # Arguments
-OWNER="${1}"
-REPO="${2}"
-GITHUB_TOKEN="${3}"
+INPUT_OWNER="${1}"
+INPUT_REPO="${2}"
+INPUT_GITHUB_TOKEN="${3}"
 WORKFLOW_FILE_NAME="${4}"  # This should be the workflow file name or ID
 REF="${5}"
 CLIENT_PAYLOAD="${6}"  # JSON payload for inputs
@@ -12,41 +12,32 @@ CLIENT_PAYLOAD="${6}"  # JSON payload for inputs
 # GitHub API URL
 GITHUB_API_URL="https://api.github.com"
 
-# Function to make API calls with improved error handling
+# Function to make API calls
 api_call() {
   path=$1
   method=$2
   data=$3
 
-  response=$(curl --fail-with-body -L -sSL -w "%{http_code}" -X "$method" \
-    -H "Accept: application/vnd.github.v3+json" \
-    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
+  response=$(curl --fail-with-body -sSL \
+    "${GITHUB_API_URL}/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/$path" \
+    -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
+    -H 'Accept: application/vnd.github.v3+json' \
+    -H 'Content-Type: application/json' \
+    -X "$method" \
     -d "$data")
 
-  http_code=$(tail -n1 <<<"$response")  # Extract HTTP status code
-  response_body=$(sed '$ d' <<<"$response")  # Extract response body
-
-  echo "HTTP Response Code: $http_code"
-  echo "API Response: $response_body"
-
-  if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 201 ]; then
-    echo >&2 "API call failed with status $http_code: $path"
+  if [ $? -ne 0 ]; then
+    echo >&2 "API call failed: $path"
     exit 1
   fi
-  echo "$response_body"
+  echo "$response"
 }
 
 # Trigger the workflow
 echo "Attempting to trigger workflow: ${WORKFLOW_FILE_NAME}"
 trigger_response=$(api_call "workflows/${WORKFLOW_FILE_NAME}/dispatches" "POST" "{\"ref\":\"${REF}\",\"inputs\":${CLIENT_PAYLOAD}}")
 
-if [ "$(jq -r '.message' <<<"$trigger_response")" != "null" ]; then
-  echo >&2 "Failed to trigger the workflow. Response message: $(jq -r '.message' <<<"$trigger_response")"
-  exit 1
-else
-  echo "Workflow trigger appears successful."
-fi
+echo "API Response: $trigger_response"
 
 # Function to wait and check the workflow status
 wait_and_check_status() {
