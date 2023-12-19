@@ -30,6 +30,8 @@ api_call() {
     "${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/$path" \
     -d "$data")
 
+  echo "API Response: $response"  # Echo the full JSON response
+
   if [ $? -ne 0 ]; then
     echo >&2 "API call failed: $path"
     exit 1
