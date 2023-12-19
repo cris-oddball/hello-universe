@@ -32,6 +32,10 @@ api_call() {
   echo "HTTP Response Code: $http_code"
   echo "API Response: $response_body"
 
+# Log the full API call for debugging
+  echo "Making API call to: ${GITHUB_API_URL}/repos/${OWNER}/${REPO}/actions/workflows/$path/dispatches"
+	echo "With data: $data"
+
   if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 201 ]; then
     echo >&2 "API call failed with status $http_code: $path"
     exit 1
