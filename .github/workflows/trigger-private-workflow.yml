@@ -30,7 +30,7 @@ jobs:
           workflow_file_name: run-tests.yml
           # taking this out because it's probably the cause of malformed request
           #ref: ${{ inputs.branch }}
-          client_payload: {"environment": "${{ inputs.environment }}"}
+          client_payload: '{"environment": "${{ inputs.environment }}"}'
           wait_interval: 10
           # may not include these
           #propagate_failure: true
