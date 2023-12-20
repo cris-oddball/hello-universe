@@ -19,12 +19,11 @@ api_call() {
   data=$3
 
   response=$(curl --fail-with-body -sSL \
-    "${GITHUB_API_URL}/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/$path" \
-    -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
-    -H 'Accept: application/vnd.github.v3+json' \
-    -H 'Content-Type: application/json' \
-    -X "$method" \
-    -d "$data")
+      "${GITHUB_API_URL}/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/$path" \
+      -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
+      -H 'Accept: application/vnd.github.v3+json' \
+      -H 'Content-Type: application/json' \
+      "$@")
 
   if [ $? -ne 0 ]; then
     echo >&2 "API call failed: $path"

@@ -28,4 +28,3 @@ runs:
   steps:
     - run: bash ${{ github.action_path }}/trigger_script.sh "${{ inputs.owner }}" "${{ inputs.repo }}" "${{ inputs.github_token }}" "${{ inputs.workflow_file_name }}" "${{ inputs.ref }}" "${{ inputs.client_payload }}" "${{ inputs.wait_interval }}"
       shell: bash
-

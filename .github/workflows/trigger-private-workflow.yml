@@ -8,10 +8,10 @@ on:
         default: "perf"
         required: true
         type: string
-      branch:
-        description: "Git branch to use in the private repo"
-        required: true
-        type: string
+      #branch:
+        #description: "Git branch to use in the private repo"
+        #required: true
+        #type: string
 
 jobs:
   run-regression:
@@ -28,8 +28,9 @@ jobs:
           repo: hello-world
           github_token: ${{ secrets.DISPATCH_PAT }}
           workflow_file_name: run-tests.yml
-          ref: ${{ inputs.branch }}
-          client_payload: '{"environment": "${{ inputs.environment }}", "branch": "${{ github.ref }}" }'
+          # taking this out because it's probably the cause of malformed request
+          #ref: ${{ inputs.branch }}
+          client_payload: {"environment": "${{ inputs.environment }}"}
           wait_interval: 10
           # may not include these
           #propagate_failure: true
