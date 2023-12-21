@@ -29,8 +29,9 @@ api_call() {
     echo >&2 "API call failed: $path"
     exit 1
   fi
-  echo "$response"
 }
+
+echo "$response"
 
 # Trigger the workflow
 echo "Attempting to trigger workflow: ${WORKFLOW_FILE_NAME}"
