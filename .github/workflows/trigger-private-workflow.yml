@@ -21,14 +21,38 @@ jobs:
     name: "set up regression for ${{ inputs.environment }}"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.DISPATCH_PAT }}
-        script: |
-          const result = await github.rest.repos.createDispatchEvent({
-            owner: 'cris-oddball',
-            repo: 'hello-world',
-            event_type: 'run_regression',
-            client_payload: {"environment": "${{ inputs.environment }}"}
-          })
-          console.log(result);
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Print working directory and list files
+        run: |
+          pwd
+          ls -al
+      
+    #- uses: actions/github-script@v6
+      #with:
+        #github-token: ${{ secrets.DISPATCH_PAT }}
+        #script: |
+          #const result = await github.rest.repos.createDispatchEvent({
+            #owner: 'cris-oddball',
+            #repo: 'hello-world',
+            #event_type: 'run_regression',
+            #client_payload: {"environment": "${{ inputs.environment }}"}
+          #})
+          #console.log(result);
+
+          #await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10 seconds
+          
+          #// Function to fetch the latest workflow run status
+          #async function getLatestWorkflowStatus() {
+            #const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              #owner: 'cris-oddball',
+              #repo: 'hello-world',
+              #event: 'workflow_dispatch' // or the event you're interested in
+            #});
+            #// Logic to find the specific run and return its status
+          #}
+
+          #// Call the function and handle the result
+          #const status = await getLatestWorkflowStatus();
+          #console.log("Latest Workflow Status:", status);
