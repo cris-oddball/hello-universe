@@ -3,3 +3,8 @@
 
 console.log("Hello World!");
 
+// scripts/script.js
+module.exports = () => {
+  console.log("Hello World!");
+};
+
