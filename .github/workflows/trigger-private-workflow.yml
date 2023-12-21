@@ -28,6 +28,25 @@ jobs:
         run: |
           pwd
           ls -al
+
+      // Runs a JavaScript script using a separate file
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            // Require the separate script file
+            const script = require('./scripts/script.js');
+            // Log the result of the script function, passing the GitHub context and other necessary data
+            console.log(script({github, context}));
+
+// The separate script file exports a function that takes the GitHub context and other data as arguments.
+module.exports = ({github, context}) => {
+  // Return some data from the context, for example, a value from the client payload
+  return context.payload.client_payload.value;
+};
+
+// For async functions, you can handle them similarly but ensure to await the result in the main inline script.
+
+
       
     #- uses: actions/github-script@v6
       #with:
