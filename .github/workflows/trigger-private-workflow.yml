@@ -1,77 +1,33 @@
 name: Trigger Regression
 
-on:
-  workflow_call:
-    inputs:
-      environment:
-        description: "Deployment environment to test (dev|perf|staging)"
-        default: "perf"
-        required: true
-        type: string
+on: 
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment to test (dev|perf|staging)"
-        default: "perf"
+        description: 'Environment (dev, staging, or perf)'
         required: true
         type: string
+      ref:
+        type: string
+        description: branch or tag or hash
+        required: true
 
 jobs:
-  run-regression:
-    name: "set up regression for ${{ inputs.environment }}"
-    runs-on: ubuntu-latest
+  trigger-regression:
+    # name: 'trigger-regression'
+    runs-on: ubuntu-latest  # specify the runner
+    # name: first job
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout Repo
+      uses: actions/checkout@v4
 
-      - name: Print working directory and list files
-        run: |
-          pwd
-          ls -al
-
-      #// Runs a JavaScript script using a separate file
-      - uses: actions/github-script@v7
-        with:
-          script: |
-            // Require the separate script file
-            const script = require('./scripts/script.js');
-            // Log the result of the script function, passing the GitHub context and other necessary data
-            console.log(script({github, context}));
-
-#// The separate script file exports a function that takes the GitHub context and other data as arguments.
-#module.exports = ({github, context}) => {
-  #// Return some data from the context, for example, a value from the client payload
-  #return context.payload.client_payload.value;
-#};
-
-#// For async functions, you can handle them similarly but ensure to await the result in the main inline script.
+    - name: Trigger and Wait for Workflow
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.DISPATCH_PAT }}
+        script: |
+          const path = '.github/scripts/workflow-trigger-and-wait.js';
+          const triggerAndWait = require(path);
+          triggerAndWait({github, context});
 
 
-      
-    #- uses: actions/github-script@v6
-      #with:
-        #github-token: ${{ secrets.DISPATCH_PAT }}
-        #script: |
-          #const result = await github.rest.repos.createDispatchEvent({
-            #owner: 'cris-oddball',
-            #repo: 'hello-world',
-            #event_type: 'run_regression',
-            #client_payload: {"environment": "${{ inputs.environment }}"}
-          #})
-          #console.log(result);
-
-          #await new Promise(resolve => setTimeout(resolve, 10000)); // wait 10 seconds
-          
-          #// Function to fetch the latest workflow run status
-          #async function getLatestWorkflowStatus() {
-            #const runs = await github.rest.actions.listWorkflowRunsForRepo({
-              #owner: 'cris-oddball',
-              #repo: 'hello-world',
-              #event: 'workflow_dispatch' // or the event you're interested in
-            #});
-            #// Logic to find the specific run and return its status
-          #}
-
-          #// Call the function and handle the result
-          #const status = await getLatestWorkflowStatus();
-          #console.log("Latest Workflow Status:", status);
