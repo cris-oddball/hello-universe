@@ -14,9 +14,8 @@ on:
 
 jobs:
   trigger-regression:
-    # name: 'trigger-regression'
-    runs-on: ubuntu-latest  # specify the runner
-    # name: first job
+    name: 'Trigger Regression'
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
@@ -26,7 +25,7 @@ jobs:
       with:
         github-token: ${{ secrets.DISPATCH_PAT }}
         script: |
-          const path = '.github/scripts/workflow-trigger-and-wait.js';
+          const path = '.github/scripts/trigger-regression.js';
           const triggerAndWait = require(path);
           triggerAndWait({github, context});
 
