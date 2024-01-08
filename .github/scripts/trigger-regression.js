@@ -1,14 +1,14 @@
 // This script will be responsible for triggering a specified workflow, waiting for its completion, and then logging the conclusion.
 
 const triggerAndWait = async ({ github, context }) => {
-  const owner = 'ldraney'; // user of private repo 
-  const repo = 'private-repo'; // private repo to contact
-  const workflow_id = 'private-workflow.yml'; // Replace with your workflow file name or ID
-  const ref = 'master'; // Usually main or master
+  const owner = 'cris-oddball'; // user of private repo 
+  const repo = 'hello-world'; // private repo to contact
+  const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
+  const ref = 'main'; // Usually main or master
 
     // Define the inputs required by the workflow
   const inputs = {
-    environment: 'your-environment', // Replace with the actual environment value or use dynamic input
+    environment: 'perf', // Replace with the actual environment value or use dynamic input
   };
 
   // Trigger the workflow
