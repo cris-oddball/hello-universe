@@ -1,20 +1,24 @@
 name: Trigger Regression
 
-on: 
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Deployment environment to test (dev|perf|staging)"
+        default: "perf"
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment (dev, staging, or perf)'
+        description: "Deployment environment to test (dev|perf|staging)"
+        default: "perf"
         required: true
         type: string
-      ref:
-        type: string
-        description: branch or tag or hash
-        required: true
 
 jobs:
-  trigger-regression:
-    name: 'Trigger Regression'
+  run-regression:
+    name: "set up regression for ${{ inputs.environment }}"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repo
