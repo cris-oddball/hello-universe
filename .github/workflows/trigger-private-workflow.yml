@@ -21,14 +21,16 @@ jobs:
     name: "set up regression for ${{ inputs.environment }}"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Trigger and Wait for Workflow
+      uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.DISPATCH_PAT }}
         script: |
-          const result = await github.rest.repos.createDispatchEvent({
-            owner: 'cris-oddball',
-            repo: 'hello-world',
-            event_type: 'run_regression',
-            client_payload: {"environment": "${{ inputs.environment }}"}
-          })
-          console.log(result);
+          const path = '.github/scripts/trigger-regression.js';
+          const triggerAndWait = require(path);
+          triggerAndWait({github, context});
+
+
