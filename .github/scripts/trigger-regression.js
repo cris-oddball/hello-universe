@@ -1,9 +1,11 @@
+// This script will be responsible for triggering a specified workflow, waiting for its completion, and then logging the conclusion.
+
 const triggerAndWait = async ({ github, context }) => {
   const owner = 'cris-oddball'; // user of private repo 
   const repo = 'hello-world'; // private repo to contact
   const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
   const ref = 'main'; // Usually main or master
-  const jobName = 'specific-job-name'; // Replace with the name of the job you want
+  const jobName = 'build'; // Replace with the name of the job you want
 
   // Define the inputs required by the workflow
   const inputs = {
