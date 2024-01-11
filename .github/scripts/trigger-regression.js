@@ -5,11 +5,13 @@ const triggerAndWait = async ({ github, context, core }) => {
   const repo = 'hello-world'; // private repo to contact
   const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
   const ref = 'main'; // Usually main or master
-  const jobName = 'Run tests'; // Replace with the name of the job you want
+  const jobName = 'Test in '; // Replace with the name of the job you want
 
-  // Define the inputs required by the workflow
+  // Access the environment input from environment variables
+  const { ENVIRONMENT } = process.env;
+
   const inputs = {
-    environment: 'perf', // Replace with the actual environment value or use dynamic input
+    environment: ENVIRONMENT,
   };
 
   // Create a timestamp for workflow run tracking
