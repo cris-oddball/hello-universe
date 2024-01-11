@@ -5,7 +5,7 @@ const triggerAndWait = async ({ github, context }) => {
   const repo = 'hello-world'; // private repo to contact
   const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
   const ref = 'main'; // Usually main or master
-  const jobName = 'build'; // Replace with the name of the job you want
+  const jobName = 'Run tests'; // Replace with the name of the job you want
 
   // Define the inputs required by the workflow
   const inputs = {
