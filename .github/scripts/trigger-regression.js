@@ -1,15 +1,17 @@
 // This script will be responsible for triggering a specified workflow, waiting for its completion, and then logging the conclusion.
 
-const triggerAndWait = async ({ github, context }) => {
+const triggerAndWait = async ({ github, context, core }) => {
   const owner = 'cris-oddball'; // user of private repo 
   const repo = 'hello-world'; // private repo to contact
   const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
-  const ref = 'main'; // Usually main or master
+  const ref = '1526-octokit'; // Usually main or master
   const jobName = 'Run tests'; // Replace with the name of the job you want
 
-  // Define the inputs required by the workflow
+    // Access the environment input from environment variables
+  const { ENVIRONMENT } = process.env;
+
   const inputs = {
-    environment: 'perf', // Replace with the actual environment value or use dynamic input
+    environment: ENVIRONMENT,
   };
 
   // Create a timestamp for workflow run tracking
@@ -92,12 +94,20 @@ const triggerAndWait = async ({ github, context }) => {
     console.log('Error fetching job logs:', error);
   });
 
-    // Check if the workflow failed and throw an error if so
-  if (conclusion !== 'success') {
-    console.error(`Workflow failed. Conclusion: ${conclusion}`);
-    throw new Error('Triggered workflow failed, causing this action to fail.');
-  }
+   // Set the output for the job summary
+  const resultText = conclusion === 'success' ? 'passed' : 'failed';
+  core.setOutput('regression_result', `QA Regression result is ${resultText}; link to this run is ${workflow_url}`);
 
+  // Append to GITHUB_STEP_SUMMARY
+  const summaryContent = `### Workflow Result\nResult: ${resultText}\n[Link to Workflow Run](${workflow_url})`;
+  require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, summaryContent);
+
+  // Check if the workflow failed and set an appropriate error message
+  if (conclusion !== 'success') {
+    const errorMessage = `Workflow failed with conclusion: ${conclusion}. See details: ${workflow_url}`;
+    console.error(errorMessage);
+    core.setFailed(errorMessage);
+  }
 };
 
 module.exports = triggerAndWait;
