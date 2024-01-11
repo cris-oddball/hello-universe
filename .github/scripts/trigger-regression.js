@@ -5,9 +5,9 @@ const triggerAndWait = async ({ github, context, core }) => {
   const repo = 'hello-world'; // private repo to contact
   const workflow_id = 'run-tests.yml'; // Replace with your workflow file name or ID
   const ref = 'main'; // Usually main or master
-  const jobName = 'Test in '; // Replace with the name of the job you want
+  const jobName = 'Run tests'; // Replace with the name of the job you want
 
-  // Access the environment input from environment variables
+    // Access the environment input from environment variables
   const { ENVIRONMENT } = process.env;
 
   const inputs = {
