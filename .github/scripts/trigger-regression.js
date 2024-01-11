@@ -1,5 +1,8 @@
 // This script will be responsible for triggering a specified workflow, waiting for its completion, and then logging the conclusion.
 
+// javascript
+const core = require('@actions/core');
+
 const triggerAndWait = async ({ github, context }) => {
   const owner = 'cris-oddball'; // user of private repo 
   const repo = 'hello-world'; // private repo to contact
