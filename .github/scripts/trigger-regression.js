@@ -108,7 +108,7 @@ const triggerAndWait = async ({ github, context, core }) => {
   // if (conclusion !== 'success') {
     // console.error(`Workflow failed. Conclusion: ${conclusion}`);
     // throw new Error('Triggered workflow failed, causing this action to fail.');
-  }
+  // }
 
 };
 
