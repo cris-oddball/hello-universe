@@ -24,13 +24,18 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Trigger and Wait for Workflow
-      uses: actions/github-script@v6
+    - uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.DISPATCH_PAT }}
         script: |
-          const path = '.github/scripts/trigger-regression.js';
-          const triggerAndWait = require(path);
-          triggerAndWait({github, context});
+          core.setFailed('Action failed')
+
+    # - name: Trigger and Wait for Workflow
+      # uses: actions/github-script@v6
+      # with:
+        # github-token: ${{ secrets.DISPATCH_PAT }}
+        # script: |
+          # const path = '.github/scripts/trigger-regression.js';
+          # const triggerAndWait = require(path);
+          # triggerAndWait({github, context});
 
 

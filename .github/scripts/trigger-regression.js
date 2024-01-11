@@ -103,6 +103,13 @@ const triggerAndWait = async ({ github, context }) => {
     core.setFailed(errorMessage);
   }
 
+  // THIS WORKS IF THE ABOVE DOESNT WORK
+    // Check if the workflow failed and throw an error if so
+  // if (conclusion !== 'success') {
+    // console.error(`Workflow failed. Conclusion: ${conclusion}`);
+    // throw new Error('Triggered workflow failed, causing this action to fail.');
+  }
+
 };
 
 module.exports = triggerAndWait;
