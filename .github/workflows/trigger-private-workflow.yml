@@ -24,13 +24,6 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    # - name: try a fail action with script
-      # uses: actions/github-script@v7
-      # with:
-        # script: |
-          # const triggerAndWait = require('./.github/scripts/set-failed-test.js');
-          # triggerAndWait({ github, context, core });
-
     - name: Trigger and Wait for Workflow
       uses: actions/github-script@v6
       with:
@@ -39,5 +32,4 @@ jobs:
           const path = '.github/scripts/trigger-regression.js';
           const triggerAndWait = require(path);
           triggerAndWait({github, context, core});
-
 
