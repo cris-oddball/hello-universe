@@ -66,6 +66,12 @@ const triggerAndWait = async ({ github, context }) => {
   console.log(`Workflow conclusion: ${conclusion}`);
   console.log(`Workflow run URL: ${workflow_url}`);
 
+    // Check if the workflow failed and throw an error if so
+  if (conclusion !== 'success') {
+    console.error(`Workflow failed. Conclusion: ${conclusion}`);
+    throw new Error('Triggered workflow failed, causing this action to fail.');
+  }
+
   // Fetch the job within the workflow run
   const jobs = await github.rest.actions.listJobsForWorkflowRun({
     owner,
