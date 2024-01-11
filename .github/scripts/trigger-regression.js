@@ -92,10 +92,15 @@ const triggerAndWait = async ({ github, context }) => {
     console.log('Error fetching job logs:', error);
   });
 
-    // Check if the workflow failed and throw an error if so
+   // Set the output for the job summary
+  const resultText = conclusion === 'success' ? 'passed' : 'failed';
+  core.setOutput('regression_result', `QA Regression result is ${resultText}; link to this run is ${workflow_url}`);
+
+  // Check if the workflow failed and set an appropriate error message
   if (conclusion !== 'success') {
-    console.error(`Workflow failed. Conclusion: ${conclusion}`);
-    throw new Error('Triggered workflow failed, causing this action to fail.');
+    const errorMessage = `Workflow failed with conclusion: ${conclusion}. See details: ${workflow_url}`;
+    console.error(errorMessage);
+    core.setFailed(errorMessage);
   }
 
 };
